@@ -1,5 +1,6 @@
 const readline = require('readline');
 const { scrapeTitles, searchStringInUrl } = require('./functions');
+const fs = require('fs');
 
 let searchString = '';
 let output = [];
@@ -12,7 +13,7 @@ const rl = readline.createInterface({
 
 rl.question('Enter the search string: ', async (input) => {
   searchString = input.trim(); // Trims input question
-console.log("Searching for your entry...")
+  console.log("Searching for your entry...");
   try {
     const titles = await scrapeTitles();
 
@@ -22,6 +23,19 @@ console.log("Searching for your entry...")
         output.push(title);
       }
     }
+
+    const result = `${searchString} appears ${output.length} times in the following articles:\n${output.join('\n')}`;
+    
+    // Write the result to a .txt file
+    fs.writeFile('search_results.txt', result, (err) => {
+      if (err) {
+        console.error('Error writing to file:', err);
+      } else {
+        console.log('Search results saved to search_results.txt');
+      }
+    });
+
+    // Log the search results to the console
     console.log(`${searchString} appears ${output.length} times in the following articles:`, output);
   } catch (error) {
     console.error('Error scraping the titles:', error);
