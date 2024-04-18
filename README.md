@@ -8,8 +8,8 @@ I decided to create a backend app in node.js utilising an asynchronous functiona
 
 ## How to use
 
-1 - Clone the repo
-2 - Ensure node.js is installed
-3 - Enter 'node app.js' into the console
-4 - You will then be prompted to enter your search term
-5 - The app will function as described above
+1. Clone the repo
+2. Ensure node.js is installed
+3. Enter 'node app.js' into the console
+4. You will then be prompted to enter your search term
+5. The app will function as described above
