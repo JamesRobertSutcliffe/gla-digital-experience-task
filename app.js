@@ -1,37 +1,31 @@
+const readline = require('readline');
+const { scrapeTitles, searchStringInUrl } = require('./functions');
 
-const axios = require('axios');
+let searchString = '';
+let output = [];
 
-const url = 'https://www.london.gov.uk/sitemap.xml?page=1';
+// readline is used to obtain user input for search query
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
 
-async function fetchHTML(url) {
+rl.question('Enter the search string: ', async (input) => {
+  searchString = input.trim(); // Trims input question
+console.log("Searching for your entry...")
   try {
-    const { data } = await axios.get(url);
-    return data;
+    const titles = await scrapeTitles();
+
+    for (const title of titles) {
+      const found = await searchStringInUrl(title, searchString);
+      if (found) {
+        output.push(title);
+      }
+    }
+    console.log(`${searchString} appears ${output.length} times in the following articles:`, output);
   } catch (error) {
-    console.error('Error fetching the HTML:', error);
-    return null;
-  }
-}
-
-async function scrapeTitles() {
-  const html = await fetchHTML(url);
-  if (!html) return;
-
-  const titleRegex = /<loc[^>]*>(.*?)<\/loc>/gi;
-  const titles = [];
-  let match;
-  
-  while ((match = titleRegex.exec(html)) !== null) {
-    titles.push(match[1]);
+    console.error('Error scraping the titles:', error);
   }
 
-  return titles;
-}
-
-scrapeTitles()
-  .then(titles => {
-    console.log('Latest article titles:');
-    // titles.forEach(title => console.log(title));
-    console.log(titles);
-  })
-  .catch(error => console.error('Error scraping the titles:', error));
+  rl.close();
+});
